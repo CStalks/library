@@ -7,9 +7,6 @@ const author       = document.querySelector("#author");
 const title        = document.querySelector("#title");
 const pages        = document.querySelector("#pages");
 
-let toggleBookStatus;
-let removeBookButton;
-
 const myLibrary    = [];
 let bookCount      = 0;
 
@@ -54,13 +51,11 @@ function displayBook(){
        
         readStatus.append(changeBookStatus);
         bookItem.append(readStatus);
-        removeBook.dataset.index = `${bookCount}`;
+        bookItem.dataset.index = `${bookCount}`;
+        console.log(bookItem.dataset.index);
         bookItem.append(removeBook);
 
-
         displayBooks.append(bookItem);
-
-        //make sure to subtract 1 from bookcount when user removes a book each time
         bookCount++; 
     }
 }
@@ -78,26 +73,41 @@ addButton.addEventListener("click", (e) => {
     e.preventDefault();
     let status = document.querySelector("input[name='status']:checked");
    
-    if(author.value && title.value && pages.value && status.value){
+    if(author.value && title.value && pages.value && status){
         addBookToLibrary(`${author.value},${title.value},${pages.value},${status.value}`);
         
         //reset the input values back to empty strings
         author.value = title.value = pages.value = '';
         modal.close();
     }
+    console.log(myLibrary);
 });
 
 document.addEventListener("click", (e) => {
-    if(e.target.className === 'read'){
-        (e.target.innerText === 'Status: Read') ?
-        e.target.innerText = 'Status: Not Read' : 
-        e.target.innerText = 'Status: Read';
-    }
+    if(e.target.className === 'read')
+        if(e.target.innerText === 'Status: Read'){
+            e.target.innerText = 'Status: Not Read';
+            let value = +(e.target.parentNode.parentNode.dataset.index);
+            myLibrary[value].status = 'Not Read';
+        } else {
+            e.target.innerText = 'Status: Read';
+            let value = +(e.target.parentNode.parentNode.dataset.index);
+            myLibrary[value].status = 'Read';
+        }
 });
 
 document.addEventListener("click", (e) => {
     if(e.target.className === 'remove'){
-       //get the data attribute key value
-       //call splice on the array with that by changing it to a number
+        const index = +(e.target.parentNode.dataset.index);
+        const parent = e.target.parentNode;
+        console.log(parent);
+        const displayBooks = document.querySelector(".displayBooks");
+        console.log(displayBooks);
+
+        myLibrary.splice(index, 1);
+        displayBooks.removeChild(parent);
+
+        console.log(myLibrary);
+        //find the parent of that element and delete that child from its parent
     }
 });
