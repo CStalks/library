@@ -33,6 +33,7 @@ addButton.addEventListener("click", (e) => {
    
     if(author.value && title.value && pages.value && status){
         addBookToLibrary(`${author.value},${title.value},${pages.value},${status.value}`);
+        
         //reset the input values back to empty strings
         author.value = title.value = pages.value = '';
         modal.close();
@@ -82,7 +83,6 @@ function displayBook(){
         bookItem.dataset.index = `${myLibrary[bookCount].index}`;
 
         displayBooks.append(bookItem);
-        console.log(myLibrary);
         bookCount++; 
     }
 }
@@ -111,7 +111,7 @@ document.addEventListener("click", (e) => {
         bookItem.parentNode.removeChild(bookItem);
         const bookItems = document.querySelectorAll(".displayBooks > div");
 
-        //update each array value index property value 
+        //update each array value index property value
         for(let i = 0; i < myLibrary.length; i++){
             myLibrary[i].index = i;
         }
