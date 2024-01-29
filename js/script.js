@@ -8,19 +8,44 @@ const title        = document.querySelector("#title");
 const pages        = document.querySelector("#pages");
 
 const myLibrary    = [];
-let bookCount      = 0;
+let   bookCount    = 0;
 
-function Book(author, title, numOfPages, status) {
-    this.author = author;
-    this.title  = title;
-    this.numOfPages  = numOfPages;
-    this.status = status;
+function Book(author, title, numOfPages, status, index) {
+    this.author     = author;
+    this.title      = title;
+    this.numOfPages = numOfPages;
+    this.status     = status;
+    this.index      = index;
 }
+
+addBook.addEventListener('click', () => {
+    modal.showModal();
+});
+
+cancelButton.addEventListener("click", () => {
+    author.value = title.value = pages.value = '';
+    modal.close();
+});
+
+addButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    let status = document.querySelector("input[name='status']:checked");
+   
+    if(author.value && title.value && pages.value && status){
+        addBookToLibrary(`${author.value},${title.value},${pages.value},${status.value}`);
+        //reset the input values back to empty strings
+        author.value = title.value = pages.value = '';
+        modal.close();
+    }
+});
 
 function addBookToLibrary(book){
     let tmpBook = book.trim().split(",");
 
-    let bookItem = new Book(tmpBook[0],tmpBook[1],tmpBook[2], tmpBook[3]);
+    //set the array index to be the book object index value
+    let index = +(myLibrary.length);
+    let bookItem = new Book(tmpBook[0],tmpBook[1],tmpBook[2], tmpBook[3], index);
+
     myLibrary.push(bookItem);
     displayBook();
 }
@@ -48,40 +73,19 @@ function displayBook(){
         bookItem.append(author);
         bookItem.append(title);
         bookItem.append(numOfPages);
-       
         readStatus.append(changeBookStatus);
         bookItem.append(readStatus);
-        bookItem.dataset.index = `${bookCount}`;
-        console.log(bookItem.dataset.index);
         bookItem.append(removeBook);
+        
+        //make the dataset index attribute of the bookItem to be the same as
+        //the value of the index property of the object
+        bookItem.dataset.index = `${myLibrary[bookCount].index}`;
 
         displayBooks.append(bookItem);
+        console.log(myLibrary);
         bookCount++; 
     }
 }
-
-addBook.addEventListener('click', () => {
-    modal.showModal();
-})
-
-cancelButton.addEventListener("click", () => {
-    author.value = title.value = pages.value = '';
-    modal.close();
-});
-
-addButton.addEventListener("click", (e) => {
-    e.preventDefault();
-    let status = document.querySelector("input[name='status']:checked");
-   
-    if(author.value && title.value && pages.value && status){
-        addBookToLibrary(`${author.value},${title.value},${pages.value},${status.value}`);
-        
-        //reset the input values back to empty strings
-        author.value = title.value = pages.value = '';
-        modal.close();
-    }
-    console.log(myLibrary);
-});
 
 document.addEventListener("click", (e) => {
     if(e.target.className === 'read')
@@ -98,16 +102,24 @@ document.addEventListener("click", (e) => {
 
 document.addEventListener("click", (e) => {
     if(e.target.className === 'remove'){
-        const index = +(e.target.parentNode.dataset.index);
-        const parent = e.target.parentNode;
-        console.log(parent);
-        const displayBooks = document.querySelector(".displayBooks");
-        console.log(displayBooks);
+        let updateParentDataset = 0;
+        const arrIndex = +(e.target.parentNode.dataset.index);
+        const bookItem = e.target.parentNode;
 
-        myLibrary.splice(index, 1);
-        displayBooks.removeChild(parent);
+        //removes the book data from the array
+        myLibrary.splice(arrIndex, 1);
+        bookItem.parentNode.removeChild(bookItem);
+        const bookItems = document.querySelectorAll(".displayBooks > div");
 
-        console.log(myLibrary);
-        //find the parent of that element and delete that child from its parent
+        //update each array value index property value 
+        for(let i = 0; i < myLibrary.length; i++){
+            myLibrary[i].index = i;
+        }
+        //update the dataset index value of each node to associate with 
+        //the current value it is inside the array
+        bookItems.forEach(item => {
+            item.dataset.index = updateParentDataset++;
+        });
+        bookCount--;
     }
 });
