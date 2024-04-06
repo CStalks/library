@@ -17,7 +17,7 @@ class Book {
         this.numOfPages = numOfPages;
         this.status     = status;
         this.index      = index;
-    }    
+    }
 }
 
 addBook.addEventListener('click', () => {
