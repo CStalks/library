@@ -10,12 +10,14 @@ const pages        = document.querySelector("#pages");
 const myLibrary    = [];
 let   bookCount    = 0;
 
-function Book(author, title, numOfPages, status, index) {
-    this.author     = author;
-    this.title      = title;
-    this.numOfPages = numOfPages;
-    this.status     = status;
-    this.index      = index;
+class Book {
+    constructor(author, title, numOfPages, status, index) {
+        this.author     = author;
+        this.title      = title;
+        this.numOfPages = numOfPages;
+        this.status     = status;
+        this.index      = index;
+    }    
 }
 
 addBook.addEventListener('click', () => {
